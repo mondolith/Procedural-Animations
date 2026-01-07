@@ -1,5 +1,6 @@
-import type {Drawable, Position} from "./base.ts";
 import {Particle} from "./particle.ts";
+import type {Position} from "./position.ts";
+import type {Drawable} from "./base.ts";
 
 export class Chain implements Drawable {
     particles: Particle[];

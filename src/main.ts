@@ -1,5 +1,5 @@
 import {Chain} from "./chain.ts";
-import {Position} from "./base.ts";
+import {StaticPosition} from "./position.ts";
 
 const canvas = document.querySelector<HTMLCanvasElement>('#canvas')!;
 const ctx = canvas.getContext('2d')!;
@@ -14,15 +14,16 @@ function clear() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
-const chain = new Chain(Position.centered(canvas), 5, 25);
+const chain = new Chain(StaticPosition.centered(canvas), 5, 25);
 
 function animate() {
     clear();
     drawFrame();
     requestAnimationFrame(animate);
 }
-animate();
 
 function drawFrame() {
     chain.draw(ctx);
 }
+
+animate();

@@ -1,4 +1,5 @@
-import type {Drawable, Position} from "./base.ts";
+import type {Drawable} from "./base.ts";
+import type {Position} from "./position.ts";
 
 export class Particle implements Drawable {
     constructor(
