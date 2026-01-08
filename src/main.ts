@@ -1,29 +1,22 @@
-import {Chain} from "./chain.ts";
-import {StaticPosition} from "./position.ts";
+import {Rope} from "./rope.ts";
+import {Canvas} from "./canvas.ts";
 
-const canvas = document.querySelector<HTMLCanvasElement>('#canvas')!;
-const ctx = canvas.getContext('2d')!;
-function resize() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-}
-window.addEventListener('resize', resize);
-resize();
+const canvas = new Canvas();
 
-function clear() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-}
-
-const chain = new Chain(StaticPosition.centered(canvas), 5, 25);
+window.addEventListener('resize', canvas.resize);
+canvas.resize();
 
 function animate() {
-    clear();
+    canvas.clear();
     drawFrame();
     requestAnimationFrame(animate);
 }
 
+const rope = new Rope(100, 200, 50, 10);
+
 function drawFrame() {
-    chain.draw(ctx);
+    rope.update({gravity: 0.5, friction: 0.98, stiffness: 30, pinnedPosition: canvas.mouse});
+    rope.draw(canvas);
 }
 
 animate();
