@@ -37,12 +37,30 @@ export class Canvas {
         this.ctx.strokeStyle = value;
     }
 
+    withStrokeStyle(value: string | CanvasGradient | CanvasPattern) {
+        this.strokeStyle = value;
+        return this;
+    }
+
     get lineWidth() {
         return this.ctx.lineWidth;
     }
 
     set lineWidth(value) {
         this.ctx.lineWidth = value;
+    }
+
+    withLineWidth(value: number) {
+        this.lineWidth = value;
+        return this;
+    }
+
+    get lineCap() {
+        return this.ctx.lineCap;
+    }
+
+    set lineCap(value) {
+        this.ctx.lineCap = value;
     }
 
     clear() {
@@ -56,6 +74,7 @@ export class Canvas {
 
     beginPath() {
         this.ctx.beginPath();
+        return this;
     }
 
     closePath() {
@@ -65,6 +84,7 @@ export class Canvas {
     drawCurve(points: Vector[], options?: {
         strokeStyle?: string | CanvasGradient | CanvasPattern;
         lineWidth?: number;
+        lineCap?: CanvasLineCap;
     }) {
         if (points.length < 2) return;
         this.beginPath();
@@ -85,6 +105,7 @@ export class Canvas {
             if (options.lineWidth) {
                 this.lineWidth = 3;
             }
+            this.lineCap = options.lineCap ?? "round";
         }
 
         this.stroke();
@@ -92,19 +113,33 @@ export class Canvas {
         this.closePath();
     }
 
-    moveTo(point: Vector) {
-        this.ctx.moveTo(point.x, point.y);
+    moveTo(x: number, y: number): Canvas
+    moveTo(point: Vector): Canvas
+    moveTo(pointOrX: Vector | number, _y?: number): Canvas {
+        const {x, y} = this.getVector(pointOrX, _y);
+        this.ctx.moveTo(x, y);
+        return this;
     }
 
-    lineTo(point: Vector) {
-        this.ctx.lineTo(point.x, point.y);
+    lineTo(x: number, _y?: number): Canvas
+    lineTo(point: Vector): Canvas
+    lineTo(pointOrX: Vector | number, _y?: number): Canvas {
+        const {x, y} = this.getVector(pointOrX, _y);
+        this.ctx.lineTo(x, y);
+        return this;
     }
 
     quadraticCurveTo(controlPoint: Vector, endPoint: Vector) {
         this.ctx.quadraticCurveTo(controlPoint.x, controlPoint.y, endPoint.x, endPoint.y);
+        return this;
     }
 
     stroke() {
         this.ctx.stroke();
+        return this;
+    }
+
+    private getVector(vectorOrX: Vector | number, y: number | undefined): Vector {
+        return typeof vectorOrX === "number" ? {x: vectorOrX, y: y!} : vectorOrX;
     }
 }

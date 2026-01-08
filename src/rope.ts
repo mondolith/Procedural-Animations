@@ -17,15 +17,19 @@ export class Rope {
         friction: number;
         stiffness: number;
         pinnedPosition?: { x: number; y: number; };
+        floorY?: number;
     }) {
-        const {gravity, friction, stiffness, pinnedPosition} = options;
+        const {gravity, friction, stiffness, pinnedPosition, floorY} = options;
         this.points.forEach(point => point.update(gravity, friction, pinnedPosition));
         for (let i = 0; i < stiffness; i++) {
-            this.updateConstraints();
+            this.updateSegmentLengthConstraint();
+            if (floorY) {
+                this.updateFloorCollisionConstraint(floorY);
+            }
         }
     }
 
-    updateConstraints() {
+    private updateSegmentLengthConstraint() {
         for (let i = 0; i < this.points.length - 1; i++) {
             const p1 = this.points[i];
             const p2 = this.points[i + 1];
@@ -52,7 +56,27 @@ export class Rope {
         }
     }
 
-    draw(canvas: Canvas) {
+    private updateFloorCollisionConstraint(floorY: number) {
+        this.points.forEach(point => {
+            if (point.y >= floorY) {
+                point.y = floorY;
+            }
+        });
+    }
+
+    draw(canvas: Canvas, options?: { floorY?: number; }) {
+        if (options) {
+            const {floorY} = options;
+            if (floorY) {
+                canvas.beginPath()
+                    .moveTo(0, floorY + 3)
+                    .lineTo(canvas.width, floorY + 3)
+                    .withStrokeStyle("#009dff")
+                    .withLineWidth(3)
+                    .stroke()
+                    .closePath();
+            }
+        }
         canvas.drawCurve(this.points, {strokeStyle: "#00ffcc", lineWidth: 3});
     }
 }
